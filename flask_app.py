@@ -1,10 +1,11 @@
 from flask import Flask, jsonify
 import xlrd
+
 #import datetime """Libreria para tomar fecha (manera de imprimir date(year,month,day)) """
 #import time """ Libreria para tomar el tiempo  """
 import mymodule
 
-app = Flask(__name__ 
+app = Flask(__name__) 
 book = xlrd.open_workbook('/home/Andres18/mysite/Tienda1.xls')
 
 @app.route('/')

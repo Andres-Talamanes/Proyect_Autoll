@@ -1,5 +1,9 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+from flaks_sqlalchemy import SQLAlchemy
+from flask_jwt_extended import create_access_token
+from datetime import datetime, timedelta
 import xlrd
+import jwt
 
 #import datetime """Libreria para tomar fecha (manera de imprimir date(year,month,day)) """
 #import time """ Libreria para tomar el tiempo  """
@@ -8,12 +12,38 @@ import mymodule
 app = Flask(__name__) 
 book = xlrd.open_workbook('/home/Andres18/mysite/Tienda1.xls')
 
+"""Key para pagina"""
+app.config["SECRET_KEY"] = "10sd101s01s"
+
+
+"""Creacion de base de datos"""
+app. config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Database.db'
+app. config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+"""crea el objeto SQLALCHEMY"""
+db = SQLAlchemy(app)
+
+"""Base De Datos"""
+class User(db.Model):
+	id = db.Column(db.Integer, primary_key = True)
+	public_id = db.Column(db.String(50), unique = True)
+	name = db.Column(db.String(100))
+	email = db.Column(db.String(70), unique = True)
+	password = db.Column(db.String(80))
+ 
+"""Inicio de sesión"""
+@app.route("/login", methods=["POST"])
+def login():
+    username = request.json.get("username", None)
+    password = request.json.get("password", None)
+    if username != "test" or password != "test":
+        return jsonify({"msg": "Bad username or password"}), 401
+
+    access_token = create_access_token(identity=username)
+    return jsonify(access_token=access_token)
+
 @app.route('/')
 def hello_world():
     return 'Hello from Flask!'
-
-
-@app.route
 
 @app.route('/')
 def hello():
